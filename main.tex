@@ -1,0 +1,61 @@
+\documentclass{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage{natbib} % to use bibliography
+\usepackage{graphicx} % to include graphics
+\usepackage{subcaption} % to include sub graphics
+\usepackage{amsmath} % to include extended mathematics
+\usepackage[breaklinks]{hyperref} % to include links
+\usepackage[acronym, toc]{glossaries} % to include a glossary
+\usepackage{fancyhdr} % to style header and footer
+\usepackage[nottoc]{tocbibind} % adds bibliography to ToC
+
+% set resources path
+\graphicspath{ {./resources/} }
+
+% create hyperlinks for ToC
+\hypersetup{
+    linktoc=all,
+}
+
+% define header and footer
+\pagestyle{fancy}
+\fancyhf{} % clear all
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\renewcommand{\sectionmark}[1]{\markright{#1}}
+\lhead{\rightmark}
+\rhead{\textbf{\leftmark}}
+\cfoot{\thepage}
+
+\title{\textbf{Nero} - A named-entity recognition model for insurances}
+\author{Yves Beutler}
+\date{January 2020}
+
+% initialize glossary
+\makeglossaries
+\include{glossary}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\listoffigures
+\listoftables
+
+% insert chapters here
+\include{chapters/introduction}
+\include{chapters/research}
+\include{chapters/approaches}
+
+% glossary
+\printglossaries
+
+% bibliography
+\bibliographystyle{plain}
+\bibliography{references}
+
+% appendix
+\appendix
+
+\end{document}
