@@ -15,18 +15,78 @@ clients and potential future clients. Most of the in-going requests are about in
 this bachelor thesis is the creation of a natural language model for named-entity recognition in the insurance context
 based on client data from Mobi24. There exist several pretrained models which are free to use, but just a few of them are
 capable of dealing with the German language and none of them are trained with insurance data. In the future, the final model
-should be used by the data scientists at Swiss Mobiliar for their own specific \acrshort{nlp}\footnote{Natural Language Processing deals
-with the understanding of human languages} tasks.
+should help the data scientists at Swiss Mobiliar for their own specific \acrshort{nlp}\footnote{Natural Language Processing deals
+with the understanding of human languages} tasks. The most interesting named entities for Swiss Mobiliar are the people's names
+and their addresses.
+
+\subsection{Benefits}
+
+A reasonable \acrshort{ner} model will give the Swiss Mobiliar several benefits in understanding natural language and thereby
+offering an even better service to its customers. The future model should be available as a python library in the Swiss Mobiliar
+repository. If this model fits any data scientist's needs, he should take advantage of it.
+
+Due to limited time resources the final model should only recognise names and addresses. It's possible to extend the list of named
+entities with new values like phone numbers or insurance polices.
+
+\subsubsection{Parameter Space and Complexity}
+
+The main advantage of such a model is to create suitable data to reduce the parameter space of any other language model. With a
+reduced parameter space, the size of the model itself and it's training duration gets minimised. Especially if you want to develop
+micro services, a lightweight and therefore fast model is required to satisfy customers needs.
+
+Table \ref{tbl:param-space} shows, that the reduced parameter space consists of much less tokens than the original space. In this
+case it uses only $\frac{4}{7}$ of the tokens to express nearly the same amount of information. For a model, which wants to learn
+user's intents and doesn't need the plain facts, this would be a real advantage. Of course there are plenty of other examples.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|l|c|c|c|c|c|c|c|}
+        \hline
+        \textbf{Default} & Sherlock & Holmes & lives & at & 221b & Baker & Street. \\
+        \hline
+        \textbf{Reduced} & PER & lives & at & LOC & & & \\
+        \hline
+    \end{tabular}
+    \caption{Comparison of two parameter spaces}
+    \label{tbl:param-space}
+\end{table}
+
+\subsubsection{Anonymisation}
+
+Additionally, the model will be used to create anonymised data. The cleaned data could be used for demonstration purposes. Even
+training in a cloud-based infrastructure would be significantly easier because of zero restrictions from data policies. All data
+processed by the \acrshort{ner} model can be freely distributed across Swiss Mobiliar.
+
+Instead of removing personal information there is also the opportunity to replace named entities with fictional values. The data
+would look correctly but isn't mirroring the reality and thus can be shared again. Although this approach may confuse users which
+aren't aware of the fact that the entities are fictional it's worth mentioning.
+
+Though it's important to keep in mind that real anonymisation isn't possible. After data is being de-identified\footnote{The process
+of anonymising personal data} it can be used and shared without the restrictions of data protection laws. Sharing research data
+across institutions boosts the development of scientific inventions. The problem is that the data only seems to be anonymised. In
+fact, there is a high chance to recognise individuals if the data is being populated with additional data sources \cite{rocher19}.
+Imagine a de-identified insurance case about a car accident. There's the possibility to simply search news sites for car accidents at
+the concrete date to get personal information about the vehicle type or even the owner.
+
+\subsubsection{Form Completion}
+
+In information extraction, such a model can be useful to localise user data and complete a form with the extracted parts. If
+you combine the model with an intent classifier\footnote{A model to predict user intents, widely used in smart assistants},
+a very powerful combination arises \cite{jain18}. You could create pre-filled insurance offers from client requests. This would
+speed up the process and may result in more sales. Swiss Mobiliar is actually doing research on chat bot like claim classifiers to
+automatically recognise different type of claims.
 
 \subsection{Objectives}
 
 For a successful completion of the bachelor thesis several deliverables need to be offered to the stakeholders. Additionally
 to this document there should exist a functioning language model with an anonymized training data set. This training set
 should have an appropriate size for training the model and comparing the different outcomes. The source code should be
-written under consideration of the commonly known software engineering and design patterns.
+written under consideration of the commonly known software engineering and design patterns. The model is developed
+iteratively with one or more baseline models at beginning. The goal is to optimise the model with every new approach to
+get the highest possible recognition rate.
 
 From an administrative point of view there needs to be a presentation in the middle of January. Furthermore an abstract, used
-for the BFH publication of all bachelor theses, a poster of size A3 and a short movie clip are expected.
+for the BFH publication of all bachelor theses, a poster of size A3, and a short movie clip are expected.
 
 \subsection{Stakeholders}
 
@@ -41,7 +101,7 @@ learn as much as possible. It will be challenging to satisfy all these different
 This bachelor thesis is carried out in compliance with various deadlines. Table \ref{tbl:deadlines} gives an insight about the most
 relevant milestones and when they should be delivered to the stakeholders.
 
-\begin{table}[h!]
+\begin{table}[ht!]
     \centering
     \begin{tabular}{|l|l|}
         \hline
@@ -138,9 +198,8 @@ are best described with sample messages.
 
 Junk mails are much harder to detect today than they used to be in the past. Nowadays they are well written and mostly grammatically
 correct. Basically you could even use spam to train your model for certain use cases. But in that case spam should consistently be
-removed from the data set because it lacks of the insurance context which the model should get familiar with and learn from. The
-presence of links, the message length and the used language are often good indicators for detecting spam, especially when multiple
-indicators occur together.
+removed from the data set because it lacks of the insurance context which the model should get familiar with. The presence of links,
+the message length and the used language are often good indicators for detecting spam, especially when multiple indicators occur together.
 
 \begin{quote}
     "Ein Ding der Unmöglichkeit! https://zixiseren1983.blogspot.in Auf Wiedersehen Elisabeth Speck"
@@ -166,7 +225,13 @@ like payment success or delivery messages and failure reports present.
 
 \subsubsection{Customer Messages}
 
-this is what we want
+For the future model the messages which are actually written by humans and target Swiss Mobiliar's businesses are the only important.
+There's a wide range of message types like sponsoring requests, claim notifications, and technical questions. All these messages
+share the same context.
+
+Email messages are not as formal as letters and sometimes contain spelling errors. The texts are covered with typical Swiss expressions.
+There are even Swiss Mobiliar specific words like the name of products, magazines or applications. It's important to train the future
+model on this data to let it become aware of this typical kind of language.
 
 \begin{quote}
     "Geschätzte Mobiliar ich habe mein Passwort verlegt. mit flotten Grüssen N. Augustus"
@@ -177,7 +242,7 @@ this is what we want
 \end{quote}
 
 \begin{quote}
-    "Liebe Mobiliar Ich möchte das Mobirama abbestellen. Freundliche Grüsse Commodus Bundesgasse 35 3011 Bern"
+    "Liebe Mobiliar Ich möchte das Mobirama abbestellen. Freundliche Grüsse Julius Bundesgasse 35 3011 Bern"
 \end{quote}
 
 \section{Organisation}

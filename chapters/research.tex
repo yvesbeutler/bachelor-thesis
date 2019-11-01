@@ -118,14 +118,64 @@ needs to concern the context in which the ambiguous term occurred to give a soli
 
 Named entities need to be described in a standardised way so that \acrshort{ml} models can interpret them. There exist a few labelling
 standards which are often used in \acrshort{ner}. If you have to chose a specific labelling standard, keep in mind that sophisticated
-labelling techniques give you more information than e.g. binary labelling which isn't suitable for multiple label types.
+labelling techniques give you more information than e.g. binary labelling. You can always downgrade to a lower standard but getting
+distinctive labels out of binary tags isn't possible. On the other hand, it's often easier to label data with low-level tags rather
+than e.g. \acrshort{iob} tags.
 
 \subsubsection{Binary}
 
+Binary tagging is the simplest form of labelling. Every token which isn't a named entity is going to be labelled as $0$. The remaining
+tokens which are all entities are tagged with $1$. If multiple label types need to be distinguishable, binary tagging isn't the preferred
+method. As you can see in table \ref{tbl:binary-labelling}, the two entities \emph{people} and \emph{food} cannot be distinguished.
 
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|}
+        \hline
+        Bond & drinks & his & vodka & martini & shaken, & not & stirred. \\
+        \hline
+        1 & 0 & 0 & 1 & 1 & 0 & 0 & 0 \\
+        \hline
+    \end{tabular}
+    \caption{Example of a binary tagged sentence}
+    \label{tbl:binary-labelling}
+\end{table}
 
-\subsubsection{IOB}
+\subsubsection{IOB (Inside-outside-beginning)}
 
-Unless in binary tagging with IOB tags labels can be split into distinctive tokens.
+Unlike binary tags, \acrshort{iob} labels allow you to differentiate between multiple label types. \emph{Bond} and \emph{vodka martini}
+are clearly not in the same entity group (\ref{tbl:iob-labelling}). Additional to the variable types, \acrshort{iob} tagging indicates
+multi-token entities as such. In the \emph{IOB2} format, the first token of a sequence is always labelled with the prefix \emph{B-} for
+beginning, the rest with an \emph{I-} for inside \cite{bio95}.
 
-\cite{bio95}
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|}
+        \hline
+        Bond & drinks & his & vodka & martini & shaken, & not & stirred. \\
+        \hline
+        B-PER & O & O & B-FOOD & I-FOOD & O & O & O \\
+        \hline
+    \end{tabular}
+    \caption{Example of an IOB tagged sentence}
+    \label{tbl:iob-labelling}
+\end{table}
+
+As shown in table \ref{tbl:iob-labelling2}, the first two tokens are from the same type but still distinguishable. With binary tags you
+would most likely interpret both tokens as one large named entity consisting of two separate words.
+
+\begin{table}[ht!]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|}
+        \hline
+        Huey, & Dewey, & and & Louie & are & triplets. \\
+        \hline
+        B-PER & B-PER & O & B-PER & O & O \\
+        \hline
+    \end{tabular}
+    \caption{Example of distinctive beginning tags}
+    \label{tbl:iob-labelling2}
+\end{table}
+
+The \acrshort{iob} format was later extended by an indicator for single and ending tokens. It's called \emph{BIOES} and can be useful if
+tokens are processed separately from each other so that the model cannot be able to recognise multi-token values by itself \cite{hofer18}.
