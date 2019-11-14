@@ -1,0 +1,197 @@
+\chapter{Performance Metrics}
+
+All of the following baseline attempts are measured with a total of 967 messages. Due to the different qualities of each message
+these numbers would change by adding more samples. Consider chapter \ref{chap:formulas} for an explanation of the different \acrlong{kpi}s.
+The final performance measurements for each entity type are compared against each other.
+
+\section{SpaCy}
+
+\begin{table}[ht!]
+    \centering
+    \begin{tabular}{|p{6em}|p{3em}|}
+        \hline
+        Accuracy & 0.946 \\
+        \hline
+        Precision & 0.444 \\
+        \hline
+        Recall & 0.533 \\
+        \hline
+        \textbf{F1 Score} & \textbf{0.485} \\
+        \hline
+    \end{tabular}
+    \caption{Spacy KPIs}
+    \label{tbl:perf-spacy}
+\end{table}
+
+The next two tables show how the spaCy model performs with only one given named-entity type. Due to its training corpus it's not very
+surprising that spaCy struggles more with addresses rather than people.
+
+\begin{table}[ht!]
+    \begin{minipage}{.5\linewidth}
+        \centering
+        \begin{tabular}{|p{6em}|p{3em}|}
+            \hline
+            Accuracy & 0.955 \\
+            \hline
+            Precision & 0.405 \\
+            \hline
+            Recall & 0.685 \\
+            \hline
+            \textbf{F1 Score} & \textbf{0.509} \\
+            \hline
+        \end{tabular}
+        \caption{Spacy (only PER)}
+        \label{tbl:perf-spacy-per}
+    \end{minipage}%
+    \begin{minipage}{.5\linewidth}
+        \centering
+        \begin{tabular}{|p{6em}|p{3em}|}
+            \hline
+            Accuracy & 0.933 \\
+            \hline
+            Precision & 0.039 \\
+            \hline
+            Recall & 0.158 \\
+            \hline
+            \textbf{F1 Score} & \textbf{0.063} \\
+            \hline
+        \end{tabular}
+        \caption{Spacy (only LOC)}
+        \label{tbl:perf-spacy-loc}
+    \end{minipage}
+\end{table}
+
+\section{Regex Baseline}
+
+Chapter \ref{chap:regex-model} provides more information about the different enhancements.
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{|L{16em}|C{3em}|C{3em}|C{3em}|C{3em}|}
+        \hline
+        \textbf{Enhancement} & \textbf{Acc} & \textbf{Prec} & \textbf{Rec} & \textbf{F1} \\ [1ex]
+        \hline
+        1 - Add dictionary lookup & 0.774 & 0.146 & 0.733 & 0.243 \\ [0.2ex]
+        \hline
+        2 - Remove last names dictionary & 0.953 & 0.582 & 0.401 & 0.475 \\ [0.2ex]
+        \hline
+        3 - Clean up last names & 0.948 & 0.432 & 0.723 & 0.541 \\ [0.2ex]
+        \hline
+        4 - Add uppercase constraint & 0.953 & 0.487 & 0.722 & 0.582 \\ [0.2ex]
+        \hline
+        5 - Escape \gls{diacritic}s & 0.953 & 0.486 & 0.736 & 0.585 \\ [0.2ex]
+        \hline
+        6 - Add variants (e.g. umlauts) & 0.952 & 0.503 & 0.758 & 0.605 \\ [0.2ex]
+        \hline
+        7 - Add previous and next tokens & 0.954 & 0.504 & 0.761 & 0.606 \\ [0.2ex]
+        \hline
+        8 - Clean up first- and last names & 0.982 & 0.773 & 0.752 & 0.762 \\ [0.2ex]
+        \hline
+        9 - Replace addresses with regex & 0.98 & 0.848 & 0.732 & \textbf{0.786} \\ [0.2ex]
+        \hline
+    \end{tabular}
+    \caption{Regex baseline KPIs}
+    \label{tbl:perf-regex}
+\end{table}
+
+\begin{table}[ht!]
+    \begin{minipage}{.5\linewidth}
+        \centering
+        \begin{tabular}{|p{6em}|p{3em}|}
+            \hline
+            Accuracy & 0.984 \\
+            \hline
+            Precision & 0.737 \\
+            \hline
+            Recall & 0.885 \\
+            \hline
+            \textbf{F1 Score} & \textbf{0.804} \\
+            \hline
+        \end{tabular}
+        \caption{Regex (only PER)}
+        \label{tbl:perf-regex-per}
+    \end{minipage}%
+    \begin{minipage}{.5\linewidth}
+        \centering
+        \begin{tabular}{|p{6em}|p{3em}|}
+            \hline
+            Accuracy & 0.951 \\
+            \hline
+            Precision & 0.111 \\
+            \hline
+            Recall & 0.334 \\
+            \hline
+            \textbf{F1 Score} & \textbf{0.166} \\
+            \hline
+        \end{tabular}
+        \caption{Regex (only LOC)}
+        \label{tbl:perf-regex-loc}
+    \end{minipage}
+\end{table}
+
+\section{Neural Network}
+
+\chapter{Source Code}
+
+This chapter contains source code snippets for the preprocessing work, the two baseline approaches, and the final solution.
+Only the important parts are covered in this section. The complete source code was handed to the supervising professor
+before the submission deadline.
+
+\section{Preprocessing}
+
+\subsection{Traversing Messages}
+
+\begin{lstlisting}[language=Python, label={code:traverse}, caption=Recursively traversation of email folders]
+def traverse(folder, mails):
+    """
+    Recursively traverses a folder and collects all messages
+    :param folder: current folder to traverse
+    :param mails: list of collected emails
+    :return: list of emails
+    """
+
+    # iterate over all messages in current folder
+    for i in range(folder.get_number_of_sub_messages()):
+        _message = folder.get_sub_message(i)
+
+        message = parse(_message)
+
+        message['text'] = clean_data(message['text'])
+
+        if message and message['text']:
+            mails = mails.append(message, ignore_index=True)
+
+    # iterate over all sub folders
+    for j in range(folder.get_number_of_sub_folders()):
+        subfolder = folder.get_sub_folder(j)
+        mails = traverse(subfolder, mails)
+
+    return mails
+\end{lstlisting}
+
+\section{Baseline Approaches}
+
+\subsection{Default Structure}
+
+\subsection{spaCy}
+
+\begin{lstlisting}[language=Python, label={code:tokenizer}, caption=Custom whitespace tokenizer]
+class WhitespaceTokenizer(object):
+    """
+    A simple whitespace tokenizer to split texts the same way like
+    string.split(' ') does. This class can be set as default
+    tokenizer for a spaCy instance.
+    """
+    def __init__(self, vocab):
+        self.vocab = vocab
+
+    def __call__(self, text):
+        words = text.split(' ')
+        # All tokens 'own' a subsequent space character in this tokenizer
+        spaces = [True] * len(words)
+        return Doc(self.vocab, words=words, spaces=spaces)
+\end{lstlisting}
+
+insert code here..
+
+\section{Neural Network}
