@@ -12,6 +12,7 @@
 \usepackage{listings} % to include code snippets
 \usepackage{xcolor} % to colorize source code
 \usepackage{array} % to define custom column types
+\usepackage{multicol} % to create lists with multiple columns
 
 % define column types with a fixed length
 \newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
@@ -92,7 +93,8 @@
 % insert chapters here
 \include{chapters/introduction}
 \include{chapters/research}
-\include{chapters/approaches}
+\include{chapters/baseline}
+\include{chapters/deep-learning}
 
 % glossary
 \printglossaries

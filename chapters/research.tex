@@ -17,15 +17,15 @@ concept which these metrics are build on top of.
 \label{fig:metrics}
 \end{figure}
 
-For every classification task there exist exactly four possible outcomes. When the model classifies an element correctly it's
-either a \emph{true positive} or a \emph{true negative} value. The keyword \emph{true} relates to the assumption the model did.
-Vice versa it's either a \emph{false positive} or a \emph{false negative} value if the model's assumption is wrong.
+For every binary classification task there exist exactly four possible outcomes. When the model classifies an element correctly it's
+either a \emph{true positive} or a \emph{true negative} value. The keyword \emph{true} relates to the prediction the model did.
+Vice versa it's either a \emph{false positive} or a \emph{false negative} value if the model's prediction is wrong.
 
 The combination of \emph{true positive} and \emph{false negative} values is the amount of relevant data we want to have a closer
-look on. For example this could be a set of \emph{named entities} or a group of patients which have a certain disease.
+look at. For example this could be a set of \emph{named entities} or a group of patients which have a certain disease.
 
 \subsection{Why Accuracy is not enough}
-
+\label{chap:accuracy}
 Probably the most well-known and certainly the easiest metric to understand is called \emph{accuracy}. It describes the
 closeness of a set of predictions to its corresponding \emph{truth values}. Accuracy is the proportion of all correctly classified
 elements in relation to the total quantity. It's value lies somewhere between zero and one.
@@ -39,14 +39,15 @@ There is one large downside with accuracy which makes it useless for many classi
 representing the majority of elements, accuracy will always be at a very high level. This is called an \emph{imbalanced
 classification problem} \cite{koehrsen}. Imagine a model for detecting very rare diseases which simply labels each tested patient
 as \emph{negative}. If the chance of getting this disease is about \(\frac{1}{10000}\), the accuracy of such model would be at
-stunning $99.99\%$. That's why every data scientist should consider using more advanced metrics like described in the next section.
+stunning $99.99\%$. That's why every data scientist should consider using more advanced metrics as described in the next section.
 
 \subsection{Precision and Recall}
 
 \emph{Precision} measures the accuracy of the positive predictions. In other words, it's the proportion of correctly classified
-elements in relation to all elements the model marked as \emph{positive}. A model which randomly classifies a single element as
-\emph{positive} and is right about that, will have a \emph{precision} of $1.0$. The results of a model with a high \emph{precision}
-are very useful because most values have been correctly classified and therefore can be used for further processing.
+elements in relation to all elements the model marked as \emph{positive}. A model which classifies only one single element as
+\emph{positive} (the rest as \emph{negative}) and is right about that, will have a \emph{precision} of $1.0$. The results of a
+model with a high \emph{precision} are very useful because most values have been correctly classified and therefore can be used
+for further processing.
 
 \begin{equation}
     \label{math:precision}
@@ -112,7 +113,7 @@ it's important to define the boundaries of what's a named entity and what's not 
 Another difficulty is if you have to deal with word ambiguity. Imagine the entity \emph{Orange} which can either be a fruit, a colour,
 a telecommunication provider or a city in France. Many fashion labels are named after designers like \emph{Calvin Klein} or \emph{Ralph
 Lauren} but when people mention them, they mostly mean the brand rather than the actual person \cite{Vogel19}. The \acrshort{nlp} model
-needs to concern the context in which the ambiguous term occurred to give a solid prediction.
+needs to consider the context in which the ambiguous term occurred to give a solid prediction.
 
 \subsection{Labelling Standards}
 
@@ -139,6 +140,22 @@ method. As you can see in table \ref{tbl:binary-labelling}, the two entities \em
     \end{tabular}
     \caption{Example of a binary tagged sentence}
     \label{tbl:binary-labelling}
+\end{table}
+
+This issue can be solved by using multi-class labelling. This technique uses distinctive labels for every entity type as seen in
+\ref{tbl:multiclass-labelling}.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|}
+        \hline
+        Bond & drinks & his & vodka & martini & shaken, & not & stirred. \\
+        \hline
+        1 & 0 & 0 & 2 & 2 & 0 & 0 & 0 \\
+        \hline
+    \end{tabular}
+    \caption{Example of multi-class tagged sentence}
+    \label{tbl:multiclass-labelling}
 \end{table}
 
 \subsubsection{IOB (Inside-outside-beginning)}
@@ -177,5 +194,21 @@ would most likely interpret both tokens as one large named entity consisting of 
     \label{tbl:iob-labelling2}
 \end{table}
 
+\subsubsection{BIOES}
+
 The \acrshort{iob} format was later extended by an indicator for single and ending tokens. It's called \emph{BIOES} and can be useful if
-tokens are processed separately from each other so that the model cannot be able to recognise multi-token values by itself \cite{hofer18}.
+tokens are processed separately from each other so that the model cannot be able to recognise multi-token values by itself.
+The \emph{s} stands for single tokens whereas the \emph{e} indicates ending tokens \cite{hofer18}.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|}
+        \hline
+        Bond & drinks & his & vodka & martini & shaken, & not & stirred. \\
+        \hline
+        S-PER & O & O & B-FOOD & E-FOOD & O & O & O \\
+        \hline
+    \end{tabular}
+    \caption{Example of an BIOES tagged sentence}
+    \label{tbl:bioes-labelling}
+\end{table}
