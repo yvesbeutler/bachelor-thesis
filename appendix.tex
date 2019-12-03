@@ -129,6 +129,91 @@ Chapter \ref{chap:regex-model} provides more information about the different enh
     \end{minipage}
 \end{table}
 
+\subsection{Excluded Ambiguous Names}
+\label{lst:excluded-names}
+
+The following list shows all values which aren't common names or which may be names but are ambiguous. These values are removed from the naming dictionaries which
+are used by the regex baseline model.
+
+\begin{multicols}{4}
+    \begin{itemize}
+        \item mobiliar
+        \item mobi
+        \item immobilien
+        \item safari
+        \item franken
+        \item guten
+        \item leider
+        \item min
+        \item link
+        \item weiss
+        \item herr
+        \item app
+        \item kunde
+        \item dame
+        \item damen
+        \item frau
+        \item gerne
+        \item sport
+        \item firma
+        \item herren
+        \item liebe
+        \item schaden
+        \item grund
+        \item person
+        \item kinder
+        \item mio
+        \item juni
+        \item bern
+        \item mail
+        \item post
+        \item mar
+        \item sun
+        \item fall
+        \item ort
+        \item hand
+        \item mon
+        \item wed
+        \item may
+        \item gruss
+        \item abend
+        \item mai
+        \item juni
+        \item juli
+        \item phone
+        \item spray
+        \item buchung
+        \item freitag
+        \item montag
+        \item monday
+        \item fehler
+        \item glueck
+        \item uri
+        \item seite
+        \item auto
+        \item pin
+        \item biel
+        \item you
+        \item helvetia
+        \item weg
+        \item art
+        \item termine
+        \item chance
+        \item merci
+        \item stecker
+        \item preis
+        \item partner
+        \item restaurant
+        \item handy
+        \item zurich
+        \item schlechten
+        \item privat
+        \item frische
+        \item kan
+        \item name
+    \end{itemize}
+\end{multicols}
+
 \section{Neural Network}
 
 \chapter{Source Code}
@@ -170,8 +255,6 @@ def traverse(folder, mails):
 \end{lstlisting}
 
 \section{Baseline Approaches}
-
-\subsection{Default Structure}
 
 \subsection{spaCy}
 
