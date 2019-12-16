@@ -214,45 +214,12 @@ are used by the regex baseline model.
     \end{itemize}
 \end{multicols}
 
-\section{Neural Network}
-
 \chapter{Source Code}
 
 This chapter contains source code snippets for the preprocessing work, the two baseline approaches, and the final solution.
 Only the important parts are covered in this section. The complete source code was handed to the supervising professor
 before the submission deadline.
 
-\section{Preprocessing}
-
-\subsection{Traversing Messages}
-
-\begin{lstlisting}[language=Python, label={code:traverse}, caption=Recursively traversation of email folders]
-def traverse(folder, mails):
-    """
-    Recursively traverses a folder and collects all messages
-    :param folder: current folder to traverse
-    :param mails: list of collected emails
-    :return: list of emails
-    """
-
-    # iterate over all messages in current folder
-    for i in range(folder.get_number_of_sub_messages()):
-        _message = folder.get_sub_message(i)
-
-        message = parse(_message)
-
-        message['text'] = clean_data(message['text'])
-
-        if message and message['text']:
-            mails = mails.append(message, ignore_index=True)
-
-    # iterate over all sub folders
-    for j in range(folder.get_number_of_sub_folders()):
-        subfolder = folder.get_sub_folder(j)
-        mails = traverse(subfolder, mails)
-
-    return mails
-\end{lstlisting}
 
 \section{Baseline Approaches}
 
@@ -275,6 +242,72 @@ class WhitespaceTokenizer(object):
         return Doc(self.vocab, words=words, spaces=spaces)
 \end{lstlisting}
 
-insert code here..
+\section{Deep Learning}
 
-\section{Neural Network}
+\subsection{Sliding Window}
+
+\begin{lstlisting}[language=Python, label={code:sliding-window}, caption=Sliding window implementation]
+def sliding_window(sequences, window_size=5, placeholder='', flatten=True):
+    """
+    Creates windows of the exact same size, first and last windows
+    will be padded with a placeholder. The relevant token of each
+    window is placed in the middle. Flattens the list by default.
+    """
+    half = int(window_size / 2)
+    results = []
+
+    for sequence in sequences:
+
+        tokens = sequence[0]
+        labels = sequence[1]
+
+        length = len(tokens)
+        windows = []
+
+        # create windows
+        for idx in range(length):
+            start = idx - half
+            stop = idx + 1 + half
+            windows.append([tokens[max(0, start):stop], labels[idx]])
+
+        # add padding for first windows
+        for idx, val in enumerate(range(half, 0, -1)):
+            tmp = windows[idx][0]
+            for i in range(val):
+                tmp = [placeholder] + tmp
+
+            windows[idx][0] = tmp
+
+        # add padding for last windows
+        for val, idx in enumerate(range(length-half, length)):
+            tmp = windows[idx][0]
+            for i in range(val+1):
+                tmp = tmp + [placeholder]
+
+            windows[idx][0] = tmp
+
+        results.append(windows)
+
+    if flatten:
+        results = [item for sublist in results for item in sublist]
+
+    return results
+\end{lstlisting}
+
+\subsection{Keras Tokenizer}
+
+The Keras tokenizer allows you to define the \emph{OOV} token during initialisation. With the \verb|filter| option you can define which characters the
+tokenizer should filter from the tokens. The default filter would handle "\emph{Hello}" and "\emph{Hello,}" as the same token. For not losing punctuation
+the \verb|filter| parameter needs to be set to an empty string.
+
+\begin{lstlisting}[language=Python, label={code:keras-tokenizer}, caption=Fitting the Keras tokenizer]
+from tensorflow.keras.preprocessing.text import Tokenizer
+
+tokenizer = Tokenizer(oov_token='<OOV>', filters='')
+
+# create a vocabulary based on the training set
+tokenizer.fit_on_texts(train_sentences)
+
+# create sequences of IDs
+sequences = tokenizer.texts_to_sequences(test_sentences)
+\end{lstlisting}

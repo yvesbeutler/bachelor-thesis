@@ -10,7 +10,7 @@
 \usepackage{fancyhdr} % to style header and footer
 \usepackage[nottoc]{tocbibind} % adds bibliography to ToC
 \usepackage{listings} % to include code snippets
-\usepackage{xcolor} % to colorize source code
+\usepackage[table]{xcolor} % to colorize source code and table cells
 \usepackage{array} % to define custom column types
 \usepackage{multicol} % to create lists with multiple columns
 
@@ -91,10 +91,11 @@
 \lstlistoflistings
 
 % insert chapters here
-\include{chapters/introduction}
-\include{chapters/research}
-\include{chapters/baseline}
-\include{chapters/deep-learning}
+\include{chapters/1_introduction}
+\include{chapters/2_fundamentals}
+\include{chapters/3_preprocessing}
+\include{chapters/4_baseline}
+\include{chapters/5_deep-learning}
 
 % glossary
 \printglossaries
