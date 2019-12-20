@@ -1,10 +1,12 @@
-\chapter{Performance Metrics}
+\chapter{Resources}
 
-All of the following baseline attempts are measured with a total of 967 messages. Due to the different qualities of each message
-these numbers would change by adding more samples. Consider chapter \ref{chap:formulas} for an explanation of the different \acrlong{kpi}s.
-The final performance measurements for each entity type are compared against each other.
+This chapter contains code snippets, performance measurements, and additional information which would unnecessarily bloat the report. Only the important parts are covered in this section. The complete source code was handed to the supervising professor before the submission deadline.
 
-\section{SpaCy}
+\section{Performance Metrics}
+
+The \acrlong{kpi}s are measured with a total of 967 manually-labelled messages. These numbers will be affected by adding more trainig samples. Consider section \ref{chap:formulas} for more information about the different \acrshort{kpi}s.
+
+\subsection{SpaCy}
 
 \begin{table}[ht!]
     \centering
@@ -22,9 +24,6 @@ The final performance measurements for each entity type are compared against eac
     \caption{Spacy KPIs}
     \label{tbl:perf-spacy}
 \end{table}
-
-The next two tables show how the spaCy model performs with only one given named-entity type. Due to its training corpus it's not very
-surprising that spaCy struggles more with addresses rather than people.
 
 \begin{table}[ht!]
     \begin{minipage}{.5\linewidth}
@@ -61,9 +60,9 @@ surprising that spaCy struggles more with addresses rather than people.
     \end{minipage}
 \end{table}
 
-\section{Regex Baseline}
+\subsection{Basic Lookup Model}
 
-Chapter \ref{chap:regex-model} provides more information about the different enhancements.
+Consider chapter \ref{chap:regex-model} for more information about the different enhancements.
 
 \begin{table}[ht]
     \centering
@@ -90,7 +89,7 @@ Chapter \ref{chap:regex-model} provides more information about the different enh
         9 - Replace addresses with regex & 0.98 & 0.848 & 0.732 & \textbf{0.786} \\ [0.2ex]
         \hline
     \end{tabular}
-    \caption{Regex baseline KPIs}
+    \caption{Basic Lookup Model KPIs}
     \label{tbl:perf-regex}
 \end{table}
 
@@ -108,7 +107,7 @@ Chapter \ref{chap:regex-model} provides more information about the different enh
             \textbf{F1 Score} & \textbf{0.804} \\
             \hline
         \end{tabular}
-        \caption{Regex (only PER)}
+        \caption{Lookup Model (PER)}
         \label{tbl:perf-regex-per}
     \end{minipage}%
     \begin{minipage}{.5\linewidth}
@@ -124,16 +123,89 @@ Chapter \ref{chap:regex-model} provides more information about the different enh
             \textbf{F1 Score} & \textbf{0.166} \\
             \hline
         \end{tabular}
-        \caption{Regex (only LOC)}
+        \caption{Lookup Model (LOC)}
         \label{tbl:perf-regex-loc}
     \end{minipage}
 \end{table}
 
+\subsection{Deep Learning}
+
+Here are the metrics for the very deep net and stuff..
+
+\section{Source Code}
+
+\subsection{Keras Tokenizer}
+
+The Keras tokenizer allows you to define the \emph{OOV} token during initialisation. With the \verb|filter| option you can define which characters the tokenizer should filter from the tokens. The default filter would handle "\emph{Hello}" and "\emph{Hello,}" as the same token. For not losing punctuation the \verb|filter| parameter needs to be set to an empty string.
+
+\begin{lstlisting}[language=Python, label={code:keras-tokenizer}, caption=Fitting the Keras tokenizer]
+from tensorflow.keras.preprocessing.text import Tokenizer
+
+tokenizer = Tokenizer(oov_token='<OOV>', filters='')
+
+# create a vocabulary based on the training set
+tokenizer.fit_on_texts(train_sentences)
+
+# create sequences of IDs
+sequences = tokenizer.texts_to_sequences(test_sentences)
+\end{lstlisting}
+
+\subsection{Sliding Window}
+
+\begin{lstlisting}[language=Python, label={code:sliding-window}, caption=Sliding window implementation]
+def sliding_window(sequences, window_size=5, placeholder='', flatten=True):
+    """
+    Creates windows of the exact same size, first and last windows
+    will be padded with a placeholder. The relevant token of each
+    window is placed in the middle. Flattens the list by default.
+    """
+    half = int(window_size / 2)
+    results = []
+
+    for sequence in sequences:
+
+        tokens = sequence[0]
+        labels = sequence[1]
+
+        length = len(tokens)
+        windows = []
+
+        # create windows
+        for idx in range(length):
+            start = idx - half
+            stop = idx + 1 + half
+            windows.append([tokens[max(0, start):stop], labels[idx]])
+
+        # add padding for first windows
+        for idx, val in enumerate(range(half, 0, -1)):
+            tmp = windows[idx][0]
+            for i in range(val):
+                tmp = [placeholder] + tmp
+
+            windows[idx][0] = tmp
+
+        # add padding for last windows
+        for val, idx in enumerate(range(length-half, length)):
+            tmp = windows[idx][0]
+            for i in range(val+1):
+                tmp = tmp + [placeholder]
+
+            windows[idx][0] = tmp
+
+        results.append(windows)
+
+    if flatten:
+        results = [item for sublist in results for item in sublist]
+
+    return results
+\end{lstlisting}
+
+\section{Miscellaneous}
+
 \subsection{Excluded Ambiguous Names}
 \label{lst:excluded-names}
 
-The following list shows all values which aren't common names or which may be names but are ambiguous. These values are removed from the naming dictionaries which
-are used by the regex baseline model.
+The following list shows all values which aren't common names or which may be names but are ambiguous. These values are removed from the naming dictionaries which are used by the regex baseline model.
 
 \begin{multicols}{4}
     \begin{itemize}
@@ -214,100 +286,3 @@ are used by the regex baseline model.
     \end{itemize}
 \end{multicols}
 
-\chapter{Source Code}
-
-This chapter contains source code snippets for the preprocessing work, the two baseline approaches, and the final solution.
-Only the important parts are covered in this section. The complete source code was handed to the supervising professor
-before the submission deadline.
-
-
-\section{Baseline Approaches}
-
-\subsection{spaCy}
-
-\begin{lstlisting}[language=Python, label={code:tokenizer}, caption=Custom whitespace tokenizer]
-class WhitespaceTokenizer(object):
-    """
-    A simple whitespace tokenizer to split texts the same way like
-    string.split(' ') does. This class can be set as default
-    tokenizer for a spaCy instance.
-    """
-    def __init__(self, vocab):
-        self.vocab = vocab
-
-    def __call__(self, text):
-        words = text.split(' ')
-        # All tokens 'own' a subsequent space character in this tokenizer
-        spaces = [True] * len(words)
-        return Doc(self.vocab, words=words, spaces=spaces)
-\end{lstlisting}
-
-\section{Deep Learning}
-
-\subsection{Sliding Window}
-
-\begin{lstlisting}[language=Python, label={code:sliding-window}, caption=Sliding window implementation]
-def sliding_window(sequences, window_size=5, placeholder='', flatten=True):
-    """
-    Creates windows of the exact same size, first and last windows
-    will be padded with a placeholder. The relevant token of each
-    window is placed in the middle. Flattens the list by default.
-    """
-    half = int(window_size / 2)
-    results = []
-
-    for sequence in sequences:
-
-        tokens = sequence[0]
-        labels = sequence[1]
-
-        length = len(tokens)
-        windows = []
-
-        # create windows
-        for idx in range(length):
-            start = idx - half
-            stop = idx + 1 + half
-            windows.append([tokens[max(0, start):stop], labels[idx]])
-
-        # add padding for first windows
-        for idx, val in enumerate(range(half, 0, -1)):
-            tmp = windows[idx][0]
-            for i in range(val):
-                tmp = [placeholder] + tmp
-
-            windows[idx][0] = tmp
-
-        # add padding for last windows
-        for val, idx in enumerate(range(length-half, length)):
-            tmp = windows[idx][0]
-            for i in range(val+1):
-                tmp = tmp + [placeholder]
-
-            windows[idx][0] = tmp
-
-        results.append(windows)
-
-    if flatten:
-        results = [item for sublist in results for item in sublist]
-
-    return results
-\end{lstlisting}
-
-\subsection{Keras Tokenizer}
-
-The Keras tokenizer allows you to define the \emph{OOV} token during initialisation. With the \verb|filter| option you can define which characters the
-tokenizer should filter from the tokens. The default filter would handle "\emph{Hello}" and "\emph{Hello,}" as the same token. For not losing punctuation
-the \verb|filter| parameter needs to be set to an empty string.
-
-\begin{lstlisting}[language=Python, label={code:keras-tokenizer}, caption=Fitting the Keras tokenizer]
-from tensorflow.keras.preprocessing.text import Tokenizer
-
-tokenizer = Tokenizer(oov_token='<OOV>', filters='')
-
-# create a vocabulary based on the training set
-tokenizer.fit_on_texts(train_sentences)
-
-# create sequences of IDs
-sequences = tokenizer.texts_to_sequences(test_sentences)
-\end{lstlisting}
