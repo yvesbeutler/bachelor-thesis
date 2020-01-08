@@ -1,22 +1,22 @@
 \chapter{Introduction}
 
-Natural language processing (\acrshort{nlp}) is a subfield of linguistics, computer science, and artificial intelligence dealing with the interaction between computers and humans using natural language. \acrshort{nlp}s main objective is to decipher, interpret, and react to human language which often relies on \acrlong{ml} techniques. Natural language includes both speech and text \cite{garbade}. There exist many use cases for \acrshort{nlp} such as text-to-speech transformation, machine translation\footnote{Translating one written language into another like Google Translator or DeepL does}, part-of-speech tagging\footnote{The process of identifying nouns, verbs, adjectives, adverbs, etc.}, and \acrlong{ner}. This bachelor thesis is about the latter topic, also called \acrshort{ner}.
+Natural language processing (NLP) is a subfield of linguistics, computer science, and artificial intelligence dealing with the interaction between computers and humans using natural language. NLPs main objective is to decipher, interpret, and react to human language which often relies on machine learning (ML) techniques. Natural language includes both speech and text \cite{garbade}. There exist many use cases for NLP such as text-to-speech transformation, machine translation\footnote{Translating one written language into another like Google Translator or DeepL does}, part-of-speech tagging\footnote{The process of identifying nouns, verbs, adjectives, adverbs, etc.}, and named-entity recognition. This bachelor thesis is about the latter topic, also called NER.
 
 \section{Project Overview}
 
-\Gls{mobi24} is an assistance and emergency call centre founded by the Swiss Mobiliar in 1997. It's the initial contact point for clients and potential future clients. Most of the in-going requests are insurance related subjects. The purpose of this bachelor thesis is the creation of a natural language model for \acrlong{ner} in the insurance context based on client data from \gls{mobi24}. There already exist several pretrained models which are free to use, but just a few of them are capable of dealing with the German language and none of them are trained with insurance data. In the future, the model from this thesis should help the data scientists at Swiss Mobiliar for their own specific \acrshort{nlp} tasks. Currently the most interesting named entities for Swiss Mobiliar are the people's names and their addresses. Consider chapter \ref{chap:ner-overview} for detailed information about \acrshort{ner} and how it works.
+Mobi24 is an assistance and emergency call centre founded by the Swiss Mobiliar in 1997. It's the initial contact point for clients and potential future clients. Most of the in-going requests are insurance related subjects. The purpose of this bachelor thesis is the creation of a natural language model for named-entity recognition in the insurance context based on client data from Mobi24. There already exist several pretrained models which are free to use, but just a few of them are capable of dealing with the German language and none of them are trained with insurance data. In the future, the model from this thesis should help the data scientists at Swiss Mobiliar for their own specific NLP tasks. Currently the most interesting named entities for Swiss Mobiliar are the people's names and their addresses. Consider chapter \ref{chap:ner-overview} for detailed information about NER and how it works.
 
 \subsection{Objectives}
 
-For a successful completion of the bachelor thesis several deliverables need to be offered to the stakeholders. Additionally to this document there should exist a functioning language model with an anonymised training data set. This training set should have an appropriate size for training the model and comparing the different outcomes. The source code should be written under consideration of the commonly known software engineering and design patterns. The model is developed iteratively with one or more baseline models\footnote{A very simple approach which sets the minimal requirements for NER} at beginning. The goal is to optimise the model with every new approach to get the most accurate output possible.
+For a successful completion of the bachelor thesis several deliverables need to be offered to the stakeholders. Additionally to this document there should exist a functioning language model with an anonymised test data set. This data set should have an appropriate size for evaluating the model's performance. The source code should be written under consideration of the commonly known software engineering and design patterns. The model is developed iteratively with one or more baseline models\footnote{A very simple approach which sets the minimal requirements for NER} at beginning. The goal is to optimise the model with every new approach to get the most accurate output possible.
 
 From an administrative point of view there are several deliverables this bachelor thesis has to provide. A summarized overview about all objectives can be found in the table below. Consider table \ref{tbl:deadlines} for the corresponding deadlines.
 
 \begin{enumerate}
-    \item \acrshort{ner} model (with anonymised training / validation data)
+    \item NER model (with anonymised test data)
     \item Bachelor thesis (current document)
-    \item Presentation for the \acrshort{bfh} techdays 2020
-    \item Abstract for the \acrshort{bfh} publication of all bachelor theses
+    \item Presentation for the BFH techdays 2020
+    \item Abstract for the BFH publication of all bachelor theses
     \item Poster (of size A3)
     \item Short movie clip about the project's essentials
 \end{enumerate}
@@ -46,13 +46,13 @@ This bachelor thesis is carried out in compliance with various deadlines. Table 
 
 \subsection{Stakeholders}
 
-There are several stakeholders interested in the outcome of this project. There is the Swiss Mobiliar and especially its data scientists, who want to reuse the trained \acrshort{nlp} model for their own projects. On the other hand, there is the \acrlong{bfh} which is demanding a satisfactory thesis for awarding me with the bachelor's degree in computer science. Last but not least, I act as a stakeholder as well and I want to dig deeper in the field of data science and learn as much as possible.
+There are several stakeholders interested in the outcome of this project. There is the Swiss Mobiliar and especially its data scientists, who want to reuse the trained NLP model for their own projects. On the other hand, there is the Bern University of Applied Sciences (BFH) which is demanding a satisfactory thesis for awarding me with the bachelor's degree in computer science. Last but not least, I act as a stakeholder as well and I want to dig deeper in the field of data science and learn as much as possible.
 
-It will be challenging to satisfy all these different stakeholders to an adequate level. Swiss Mobiliar is very focused on the resulting model whereas the \acrshort{bfh} is more interested in the overall project, including time and project management.
+It will be challenging to satisfy all these different stakeholders to an adequate level. Swiss Mobiliar is very focused on the resulting model whereas the BFH is more interested in the overall project, including time and project management.
 
 \section{Organisation}
 
-This bachelor thesis is written during my last semester at the \acrlong{bfh} while I'm working full-time at the Swiss Mobiliar in the Department of \emph{Cognitive Computing \& Disruptive Analytics}. The department is mainly responsible for the development of cognitive applications to support existing business processes. The team is also driving the digital transformation and making Swiss Mobiliar data addicted.
+This bachelor thesis is written during my last semester at the Bern University of Applied Sciences while I'm working full-time at the Swiss Mobiliar in the Department of \emph{Cognitive Computing \& Disruptive Analytics}. The department is mainly responsible for the development of cognitive applications to support existing business processes. The team is also driving the digital transformation and making Swiss Mobiliar data addicted.
 
 \subsection{Coordination}
 
@@ -75,4 +75,4 @@ All source code is generally written in Python. Small code snippets, mostly for 
 
 \section{Data Privacy Declaration}
 
-All used examples and data snippets in this document are anonymised to protect the privacy of Swiss Mobiliar's clients. All names and addresses are either cropped out of the original text or purely fictional. The training and validation data given to the supervising professor for validating the final model is anonymised too.
+All used examples and data snippets in this document are anonymised to protect the privacy of Swiss Mobiliar's clients. All names and addresses are either cropped out of the original text or purely fictional. The test data given to the supervising professor for validating the final model is anonymised too.

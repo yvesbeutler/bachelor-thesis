@@ -4,7 +4,7 @@ This chapter contains code snippets, performance measurements, and additional in
 
 \section{Performance Metrics}
 
-The \acrlong{kpi}s are measured with a total of 967 manually-labelled messages. These numbers will be affected by adding more trainig samples. Consider section \ref{chap:formulas} for more information about the different \acrshort{kpi}s.
+The key performance indicators are measured with a total of 967 manually-labelled messages. These numbers will be affected by adding more training samples. Consider section \ref{chap:formulas} for more information about the different KPIs.
 
 \subsection{SpaCy}
 
@@ -78,7 +78,7 @@ Consider chapter \ref{chap:regex-model} for more information about the different
         \hline
         4 - Add uppercase constraint & 0.953 & 0.487 & 0.722 & 0.582 \\ [0.2ex]
         \hline
-        5 - Escape \gls{diacritic}s & 0.953 & 0.486 & 0.736 & 0.585 \\ [0.2ex]
+        5 - Escape diacritics & 0.953 & 0.486 & 0.736 & 0.585 \\ [0.2ex]
         \hline
         6 - Add variants (e.g. umlauts) & 0.952 & 0.503 & 0.758 & 0.605 \\ [0.2ex]
         \hline
@@ -130,7 +130,35 @@ Consider chapter \ref{chap:regex-model} for more information about the different
 
 \subsection{Deep Learning}
 
-Here are the metrics for the very deep net and stuff..
+The different models and their parameters are described in chapter \ref{chap:deep-performance}. The best scores are highlighted with bold numbers.
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{|L{16em}|C{3em}|C{3em}|C{3em}|C{3em}|}
+        \hline
+        \textbf{Deep Learning Approach} & \textbf{Acc} & \textbf{Prec} & \textbf{Rec} & \textbf{F1} \\ [1ex]
+        \hline
+        1 - Small MLP (323 parameters) & 0.95 & 0.489 & 0.247 & 0.328 \\ [0.2ex]
+        \hline
+        2 - Large MLP (69123 parameters) & 0.95 & 0.48 & 0.276 & 0.351 \\ [0.2ex]
+        \hline
+        3 - Large MLP with weights & 0.949 & 0.473 & 0.279 & 0.351 \\ [0.2ex]
+        \hline
+        4 - Custom embeddings (Mobi24) & 0.983 & 0.902 & 0.73 & 0.807 \\ [0.2ex]
+        \hline
+        5 - Custom embeddings \& dropouts & 0.986 & 0.944 & 0.755 & 0.839 \\ [0.2ex]
+        \hline
+        6 - Wiki embeddings (100 dim) & 0.994 & \textbf{0.953} & 0.933 & 0.943 \\ [0.2ex]
+        \hline
+        7 - Wiki embeddings (300 dim) & 0.995 & 0.951 & 0.947 & 0.949 \\ [0.2ex]
+        \hline
+        8 - Combined embeddings (300 dim) & 0.995 & 0.948 & \textbf{0.957} & \textbf{0.953} \\ [0.2ex]
+        \hline
+    \end{tabular}
+    \caption{Performance KPIs of the deep learning models}
+    \label{tbl:perf-mlp}
+\end{table}
+
 
 \section{Source Code}
 
@@ -198,6 +226,18 @@ def sliding_window(sequences, window_size=5, placeholder='', flatten=True):
         results = [item for sublist in results for item in sublist]
 
     return results
+\end{lstlisting}
+
+\subsection{Creating Embeddings}
+
+\begin{lstlisting}[language=Python, label={code:embeddings}, caption=Creating custom embeddings]
+from gensim.models import Word2Vec
+
+DIM_SIZE = 20
+WIN_SIZE = 10
+MIN_COUNT = 5
+
+w2v = Word2Vec(messages, size=DIM_SIZE, window=WIN_SIZE, min_count=MIN_COUNT, iter=10, workers=multiprocessing.cpu_count())
 \end{lstlisting}
 
 \section{Miscellaneous}

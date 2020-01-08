@@ -13,6 +13,7 @@
 \usepackage[table]{xcolor} % to colorize source code and table cells
 \usepackage{array} % to define custom column types
 \usepackage{multicol} % to create lists with multiple columns
+\usepackage{multirow} % to create lists with multiple rows
 
 % define column types with a fixed length
 \newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
@@ -73,13 +74,13 @@
 \rhead{\textbf{\leftmark}}
 \cfoot{\thepage}
 
-\title{\textbf{Nero} - A named-entity recognition model for insurances}
+\title{\textbf{Nero} - Named-Entity Recognition for Swiss Mobiliar}
 \author{Yves Beutler}
 \date{January 2020}
 
 % initialize glossary
-\makeglossaries
-\include{glossary}
+% \makeglossaries
+% \include{glossary}
 
 \begin{document}
 
@@ -88,7 +89,7 @@
 \tableofcontents
 \listoffigures
 \listoftables
-\lstlistoflistings
+% \lstlistoflistings
 
 % insert chapters here
 \include{chapters/1_introduction}
@@ -96,9 +97,10 @@
 \include{chapters/3_preprocessing}
 \include{chapters/4_baseline}
 \include{chapters/5_deep-learning}
+\include{chapters/6_summary}
 
 % glossary
-\printglossaries
+% \printglossaries
 
 % bibliography
 \bibliographystyle{plain}
