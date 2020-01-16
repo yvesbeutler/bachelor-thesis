@@ -2,6 +2,28 @@
 
 The last chapter of this bachelor thesis focuses on reviewing the project and summarising the findings. It reveals what happens next with the deep learning model and how it could be further optimised.
 
+\section{Finished Tasks}
+
+The following section summarizes all programming tasks I've completed during this bachelor thesis. Some code fragments aren't explicitly relevant for the deep learning model to work, but proofed to be necessary for visualisation or exploration tasks.
+
+\subsection{Jupyter Plots}
+
+All plots used in this document have been created with independent jupyter notebooks. For a consistent design of the plots I used \emph{Seaborn}\footnote{For more information visit \url{https://seaborn.pydata.org/index.html}} as plotting library. Seaborn offered me better styling options than its underlying package, \emph{matplotlib}\footnote{For more information visit \url{https://matplotlib.org}}.
+
+\subsection{Preprocessing Scripts}
+
+Multiple scripts have been created for data cleansing and for comparing the cleansed data with the raw data. I had to parse the raw data, which comes in three different formats\footnote{Messages can be either of type HTML, RTF or plain text}. Further I created several dictionaries used for the basic lookup model. I scripted this code to ensure that every data scientist at Swiss Mobiliar is able to reproduce the same output I received.
+
+\subsection{Libraries}
+
+I created three libraries which can now be used from any data scientist at Swiss Mobiliar. One is the \emph{DoccanoParser}, a helping tool for parsing the output of the Doccano labeling tool into a more convenient format. The library is already used and appreciated by my colleagues. Another library is the basic lookup model, which I initially didn't want to deploy as a library. Due to another data scientist, which was glad to use my baseline for a PoC\footnote{A proof of concept is used to verify the potential of a concept for real-world application}, I finally released the model.
+
+The final deep learning model is also available as a python package. I didn't use the 300 dimensional embeddings for the final model due to its size of nearly 15GB. I switched to only 20 dimensions which reduced the model's size to 300MB. This results in a minimal performance loss. The NER model in the library achieves a \emph{f1-score} of about 93\%.
+
+\subsection{Web Application for Demonstration}
+
+To visualize the model, I created a simple frontend with \emph{Dash}\footnote{For more information visit \url{https://plot.ly}}. The application uses the NER package and the spaCy visualizer called \emph{$displaCy^{ent}$}\footnote{For more information visit \url{https://explosion.ai/demos/displacy-ent}}. Due to some restrictions of the \emph{Dash} web server, I wasn't able to initialize the model before using it. Therefore I have to load the embeddings and weights before every prediction run. The model is only used for demonstration purposes, so this isn't a serious issue.
+
 \section{Reflection}
 
 For humans it might be irritating to understand the issues computers can have in understanding natural language. After dealing with my own pre-processed data for more than four months, I can totally understand these poor little robots. Language is very versatile, ambiguous and even flexible, especially if humans don't pay too much attention on spelling.
@@ -36,6 +58,8 @@ I had to deal with a lot of overfitting. The best solution for this problem is t
 \subsection{Add Recurrent Layers}
 
 The used multi-layer perceptron is a simple feed forward network. The neurons pass their data to the neurons in the next layer. Recurrent neural networks (RNN) are different to feed forward networks. Their neurons can be connected to neurons in the same or previous layer. This allows the network to process sequences with a given context. This is appreciated in tasks like speech recognition and especially natural language processing \cite{wiki07}. A specific RNN architecture, using a memory called \emph{cell state}, is the long short-term memory (LSTM). This memory helps keeping a relation between previous and next elements in a sequence. More information and the three gates used by a LSTM network are best described in its original paper of 1997 \cite{lstm97}. It is very promising that the use of recurrent layers will increase the model's performance. Due to limited time resources this will be tried out after the bachelor thesis ends.
+
+\newpage
 
 \section{Acknowledgements}
 

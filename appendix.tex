@@ -4,7 +4,7 @@ This chapter contains code snippets, performance measurements, and additional in
 
 \section{Performance Metrics}
 
-The key performance indicators are measured with a total of 967 manually-labelled messages. These numbers will be affected by adding more training samples. Consider section \ref{chap:formulas} for more information about the different KPIs.
+The key performance indicators are measured with a total of 278 manually-labelled test messages. These numbers will be affected by adding more training samples. Consider section \ref{chap:formulas} for more information about the different KPIs.
 
 \subsection{SpaCy}
 
@@ -245,7 +245,7 @@ w2v = Word2Vec(messages, size=DIM_SIZE, window=WIN_SIZE, min_count=MIN_COUNT, it
 \subsection{Excluded Ambiguous Names}
 \label{lst:excluded-names}
 
-The following list shows all values which aren't common names or which may be names but are ambiguous. These values are removed from the naming dictionaries which are used by the regex baseline model.
+The following list shows all values which aren't common names or which may be names but are ambiguous. These values are removed from the naming dictionaries which are used by the basic lookup model.
 
 \begin{multicols}{4}
     \begin{itemize}

@@ -252,9 +252,4 @@ Given all the downsides mentioned above, there are still several deep learning p
 
 Finally, the deep learning model beats the baseline approach by far. Compared to the baseline's \emph{f1-score} of 78.6\%, the neural network reaches up to \textbf{95.3\%}. The high \emph{f1-score} gets reflected by the values for precision and recall. This is a very satisfying result in relation to the limited time span of this project and the very little data\footnote{About 1000 email messages are not the epitome of big data} available for training.
 
-However, the \textbf{95.3\%} is only realistically achievable for new data similar to the Mobi24 emails used for training. 
-\begin{enumerate}
-    \item parameter space reduction: done!
-    \item anonymisation: failed (only done when swapping names with fictional ones)
-    \item auto-fill forms: done (supports humans, doesn't need to find all entities)
-\end{enumerate}
+However, the \textbf{95.3\%} is only realistically achievable for new data similar to the Mobi24 emails used for training. If we compare the use cases of a NER model (see chapter \ref{chap:use-cases}) with the final model, we can say that the model can be used to effectively reduce the parameter space. Therefore it isn't necessary to identify every named entity. The parameter space is already reduced if the model identifies two named-entities of the same type. On the other hand, the model shouldn't be used for automated anonymisation. It is useful for supporting humans though. The recognised named entities can be used for auto-fill in forms too.
